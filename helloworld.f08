@@ -1,11 +1,3 @@
-# raylib-fortran
-Raylib bindings for Fortran '08
-
-Very much a WIP - currently only runs the hello world app.  More to come!
-
-## Hello World Sample App
-
-```fortran
 program test
    use :: raylib
    implicit none
@@ -33,4 +25,3 @@ program test
 
    call CloseWindow()
 end program
-```
