@@ -23,7 +23,7 @@ module raylib
       real(c_float) :: w
    end type
 
-   !TODO: typedef Vector4 Quaternion
+!typedef Vector4 Quaternion
 
    type, bind(c) :: Matrix
       real(c_float) :: m0,  m1,  m2,  m3
@@ -46,91 +46,80 @@ module raylib
       real(c_float) :: height
    end type
 
-   ! Constant example
-   integer(c_int) :: KEY_NULL = 0
+   type, bind(c) :: Image
+      type(c_ptr) :: data
+      integer(c_int) :: width
+      integer(c_int) :: height
+      integer(c_int) :: mipmaps
+      integer(c_int) :: format
+   end type
 
+   type, bind(c) :: Texture
+      integer(c_int) :: id
+      integer(c_int) :: width
+      integer(c_int) :: height
+      integer(c_int) :: mipmaps
+      integer(c_int) :: format
+   end type
 
-!// Image, pixel data stored in CPU memory (RAM)
-!typedef struct Image {
-!    void *data;             // Image raw data
-!    int width;              // Image base width
-!    int height;             // Image base height
-!    int mipmaps;            // Mipmap levels, 1 by default
-!    int format;             // Data format (PixelFormat type)
-!} Image;
-!
-!// Texture, tex data stored in GPU memory (VRAM)
-!typedef struct Texture {
-!    unsigned int id;        // OpenGL texture id
-!    int width;              // Texture base width
-!    int height;             // Texture base height
-!    int mipmaps;            // Mipmap levels, 1 by default
-!    int format;             // Data format (PixelFormat type)
-!} Texture;
-!
 !// Texture2D, same as Texture
 !typedef Texture Texture2D;
 !
 !// TextureCubemap, same as Texture
 !typedef Texture TextureCubemap;
-!
-!// RenderTexture, fbo for texture rendering
-!typedef struct RenderTexture {
-!    unsigned int id;        // OpenGL framebuffer object id
-!    Texture texture;        // Color buffer attachment texture
-!    Texture depth;          // Depth buffer attachment texture
-!} RenderTexture;
-!
+
+   type, bind(c) :: RenderTexture
+      integer(c_int) :: id
+      type(Texture) :: texture
+      type(Texture) :: depth
+   end type
+
 !// RenderTexture2D, same as RenderTexture
 !typedef RenderTexture RenderTexture2D;
 !
-!// NPatchInfo, n-patch layout info
-!typedef struct NPatchInfo {
-!    Rectangle source;       // Texture source rectangle
-!    int left;               // Left border offset
-!    int top;                // Top border offset
-!    int right;              // Right border offset
-!    int bottom;             // Bottom border offset
-!    int layout;             // Layout of the n-patch: 3x3, 1x3 or 3x1
-!} NPatchInfo;
-!
-!// GlyphInfo, font characters glyphs info
-!typedef struct GlyphInfo {
-!    int value;              // Character value (Unicode)
-!    int offsetX;            // Character offset X when drawing
-!    int offsetY;            // Character offset Y when drawing
-!    int advanceX;           // Character advance position X
-!    Image image;            // Character image data
-!} GlyphInfo;
-!
-!// Font, font texture and GlyphInfo array data
-!typedef struct Font {
-!    int baseSize;           // Base size (default chars height)
-!    int glyphCount;         // Number of glyph characters
-!    int glyphPadding;       // Padding around the glyph characters
-!    Texture2D texture;      // Texture atlas containing the glyphs
-!    Rectangle *recs;        // Rectangles in texture for the glyphs
-!    GlyphInfo *glyphs;      // Glyphs info data
-!} Font;
-!
-!// Camera, defines position/orientation in 3d space
-!typedef struct Camera3D {
-!    Vector3 position;       // Camera position
-!    Vector3 target;         // Camera target it looks-at
-!    Vector3 up;             // Camera up vector (rotation over its axis)
-!    float fovy;             // Camera field-of-view apperture in Y (degrees) in perspective, used as near plane width in orthographic
-!    int projection;         // Camera projection: CAMERA_PERSPECTIVE or CAMERA_ORTHOGRAPHIC
-!} Camera3D;
-!
+
+   type, bind(c) :: NPatchInfo
+      type(Rectangle) :: source
+      integer(c_int) :: left
+      integer(c_int) :: top
+      integer(c_int) :: right
+      integer(c_int) :: bottom
+      integer(c_int) :: layout
+   end type
+
+   type, bind(c) :: GlyphInfo
+      integer(c_int) :: value
+      integer(c_int) :: offsetX
+      integer(c_int) :: offsetY
+      integer(c_int) :: advanceX
+      type(Image) :: image
+   end type
+
+   type, bind(c) :: Font
+      integer(c_int) :: baseSize
+      integer(c_int) :: glyphCount
+      integer(c_int) :: glyphPadding
+      type(Texture) :: texture
+      type(c_ptr) :: recs
+      type(c_ptr) :: glyphs
+   end type
+
+   type, bind(c) :: Camera3D
+      type(Vector3) :: position
+      type(Vector3) :: target
+      type(Vector3) :: up
+      real(c_float) :: fovy
+      integer(c_int) :: projection
+   end type
+
 !typedef Camera3D Camera;    // Camera type fallback, defaults to Camera3D
-!
-!// Camera2D, defines position/orientation in 2d space
-!typedef struct Camera2D {
-!    Vector2 offset;         // Camera offset (displacement from target)
-!    Vector2 target;         // Camera target (rotation and zoom origin)
-!    float rotation;         // Camera rotation in degrees
-!    float zoom;             // Camera zoom (scaling), should be 1.0f by default
-!} Camera2D;
+
+   type, bind(c) :: Camera2D
+      type(Vector2) :: offset
+      type(Vector2) :: target
+      real(c_float) :: rotation
+      real(c_float) :: zoom
+   end type
 !
 !// Mesh, vertex data and vao/vbo
 !typedef struct Mesh {
@@ -348,7 +337,7 @@ module raylib
 !// NOTE: Use GetKeyPressed() to allow redefining
 !// required keys for alternative layouts
 !typedef enum {
-!    KEY_NULL            = 0,        // Key: NULL, used for no key pressed
+   integer(c_int) :: KEY_NULL = 0
 !    // Alphanumeric keys
 !    KEY_APOSTROPHE      = 39,       // Key: '
 !    KEY_COMMA           = 44,       // Key: ,
@@ -405,10 +394,11 @@ module raylib
 !    KEY_BACKSPACE       = 259,      // Key: Backspace
 !    KEY_INSERT          = 260,      // Key: Ins
 !    KEY_DELETE          = 261,      // Key: Del
-!    KEY_RIGHT           = 262,      // Key: Cursor right
-!    KEY_LEFT            = 263,      // Key: Cursor left
-!    KEY_DOWN            = 264,      // Key: Cursor down
-!    KEY_UP              = 265,      // Key: Cursor up
+   integer(c_int) :: KEY_DELETE = 261
+   integer(c_int) :: KEY_RIGHT = 262
+   integer(c_int) :: KEY_LEFT = 263
+   integer(c_int) :: KEY_DOWN = 264
+   integer(c_int) :: KEY_UP = 265
 !    KEY_PAGE_UP         = 266,      // Key: Page up
 !    KEY_PAGE_DOWN       = 267,      // Key: Page down
 !    KEY_HOME            = 268,      // Key: Home
@@ -721,31 +711,30 @@ module raylib
    
 
    Type(color) :: LIGHTGRAY = Color(200, 200, 200, 255)
-!#define GRAY       CLITERAL(Color){ 130, 130, 130, 255 }   // Gray
-!#define DARKGRAY   CLITERAL(Color){ 80, 80, 80, 255 }      // Dark Gray
-!#define YELLOW     CLITERAL(Color){ 253, 249, 0, 255 }     // Yellow
-!#define GOLD       CLITERAL(Color){ 255, 203, 0, 255 }     // Gold
-!#define ORANGE     CLITERAL(Color){ 255, 161, 0, 255 }     // Orange
-!#define PINK       CLITERAL(Color){ 255, 109, 194, 255 }   // Pink
-!#define RED        CLITERAL(Color){ 230, 41, 55, 255 }     // Red
-!#define MAROON     CLITERAL(Color){ 190, 33, 55, 255 }     // Maroon
-!#define GREEN      CLITERAL(Color){ 0, 228, 48, 255 }      // Green
-!#define LIME       CLITERAL(Color){ 0, 158, 47, 255 }      // Lime
-!#define DARKGREEN  CLITERAL(Color){ 0, 117, 44, 255 }      // Dark Green
-!#define SKYBLUE    CLITERAL(Color){ 102, 191, 255, 255 }   // Sky Blue
-!#define BLUE       CLITERAL(Color){ 0, 121, 241, 255 }     // Blue
-!#define DARKBLUE   CLITERAL(Color){ 0, 82, 172, 255 }      // Dark Blue
-!#define PURPLE     CLITERAL(Color){ 200, 122, 255, 255 }   // Purple
-!#define VIOLET     CLITERAL(Color){ 135, 60, 190, 255 }    // Violet
-!#define DARKPURPLE CLITERAL(Color){ 112, 31, 126, 255 }    // Dark Purple
-!#define BEIGE      CLITERAL(Color){ 211, 176, 131, 255 }   // Beige
-!#define BROWN      CLITERAL(Color){ 127, 106, 79, 255 }    // Brown
-!#define DARKBROWN  CLITERAL(Color){ 76, 63, 47, 255 }      // Dark Brown
-!
-!#define WHITE      CLITERAL(Color){ 255, 255, 255, 255 }   // White
-!#define BLACK      CLITERAL(Color){ 0, 0, 0, 255 }         // Black
-!#define BLANK      CLITERAL(Color){ 0, 0, 0, 0 }           // Blank (Transparent)
-!#define MAGENTA    CLITERAL(Color){ 255, 0, 255, 255 }     // Magenta
+   Type(color) :: GRAY = Color(130, 130, 130, 255)
+   Type(color) :: DARKGRAY = Color(80, 80, 80, 255)
+   Type(color) :: YELLOW = Color(253, 249, 0, 255)
+   Type(color) :: GOLD = Color(255, 203, 0, 255)
+   Type(color) :: ORANGE = Color(255, 161, 0, 255)
+   Type(color) :: PINK = Color(255, 109, 194, 255)
+   Type(color) :: RED = Color(230, 41, 55, 255)
+   Type(color) :: MAROON = Color(190, 33, 55, 255)
+   Type(color) :: GREEN = Color(0, 228, 48, 255)
+   Type(color) :: LIME = Color(0, 158, 47, 255)
+   Type(color) :: DARKGREEN = Color(0, 117, 44, 255)
+   Type(color) :: SKYBLUE = Color(102, 191, 255, 255)
+   Type(color) :: BLUE = Color(0, 121, 241, 255)
+   Type(color) :: DARKBLUE = Color(0, 82, 172, 255)
+   Type(color) :: PURPLE = Color(200, 122, 255, 255)
+   Type(color) :: VIOLET = Color(135, 60, 190, 255)
+   Type(color) :: DARKPURPLE = Color(112, 31, 126, 255)
+   Type(color) :: BEIGE = Color(211, 176, 131, 255)
+   Type(color) :: BROWN = Color(127, 106, 79, 255)
+   Type(color) :: DARKBROWN = Color(76, 63, 47, 255)
+   Type(color) :: WHITE = Color(255, 255, 255, 255)
+   Type(color) :: BLACK = Color(0, 0, 0, 255)
+   Type(color) :: BLANK = Color(0, 0, 0, 0)
+   Type(color) :: MAGENTA = Color(255, 0, 255, 255)
    Type(Color) :: RAYWHITE = Color(245, 245, 245, 255)
 
    interface
@@ -834,31 +823,116 @@ module raylib
       subroutine RestoreWindow () bind (c, name="RestoerWindow")
       end subroutine
 
-!RLAPI void SetWindowIcon(Image image);                            // Set icon for window (only PLATFORM_DESKTOP)
+      subroutine SetWindowIcon (img) bind (c, name="SetWindowIcon")
+         import :: Image
+         type(Image), intent(in), value :: img
+      end subroutine
 
       subroutine SetWindowTitle (title) bind (c, name="SetWindowTitle")
          import :: c_char
          character(c_char), dimension(*), intent(in) :: title
       end subroutine
 
-!RLAPI void SetWindowPosition(int x, int y);                       // Set window position on screen (only PLATFORM_DESKTOP)
-!RLAPI void SetWindowMonitor(int monitor);                         // Set monitor for the current window (fullscreen mode)
-!RLAPI void SetWindowMinSize(int width, int height);               // Set window minimum dimensions (for FLAG_WINDOW_RESIZABLE)
-!RLAPI void SetWindowSize(int width, int height);                  // Set window dimensions
-!RLAPI void SetWindowOpacity(float opacity);                       // Set window opacity [0.0f..1.0f] (only PLATFORM_DESKTOP)
-!RLAPI void *GetWindowHandle(void);                                // Get native window handle
-!RLAPI int GetScreenWidth(void);                                   // Get current screen width
-!RLAPI int GetScreenHeight(void);                                  // Get current screen height
-!RLAPI int GetRenderWidth(void);                                   // Get current render width (it considers HiDPI)
-!RLAPI int GetRenderHeight(void);                                  // Get current render height (it considers HiDPI)
-!RLAPI int GetMonitorCount(void);                                  // Get number of connected monitors
-!RLAPI int GetCurrentMonitor(void);                                // Get current connected monitor
-!RLAPI Vector2 GetMonitorPosition(int monitor);                    // Get specified monitor position
-!RLAPI int GetMonitorWidth(int monitor);                           // Get specified monitor width (current video mode used by monitor)
-!RLAPI int GetMonitorHeight(int monitor);                          // Get specified monitor height (current video mode used by monitor)
-!RLAPI int GetMonitorPhysicalWidth(int monitor);                   // Get specified monitor physical width in millimetres
-!RLAPI int GetMonitorPhysicalHeight(int monitor);                  // Get specified monitor physical height in millimetres
-!RLAPI int GetMonitorRefreshRate(int monitor);                     // Get specified monitor refresh rate
+      subroutine SetWindowPosition (x, y) bind (c, name="SetWindowPosition")
+         import :: c_int
+         integer(c_int), intent(in) :: x
+         integer(c_int), intent(in) :: y
+      end subroutine
+
+      subroutine SetWindowMonitor (mon) bind (c, name="SetWindowMonitor")
+         import :: c_int
+         integer(c_int), intent(in) :: mon
+      end subroutine
+
+      subroutine SetWindowMinSize (width, height) bind (c, name="SetWindowMinSize")
+         import :: c_int
+         integer(c_int), intent(in) :: width
+         integer(c_int), intent(in) :: height
+      end subroutine
+
+      subroutine SetWindowSize (width, height) bind (c, name="SetWindowSize")
+         import :: c_int
+         integer(c_int), intent(in) :: width
+         integer(c_int), intent(in) :: height
+      end subroutine
+
+      subroutine SetWindowOpacity (opacity) bind (c, name="SetWindowOpacity")
+         import :: c_float
+         real(c_float) :: opacity
+      end subroutine
+
+      function GetWindowHandle () result (res) bind (c, name="GetWindowHandle")
+         import :: c_ptr
+         type(c_ptr) :: res
+      end function
+
+      function GetScreenHeight () result (res) bind (c, name="GetScreenHeight")
+         import :: c_int
+         integer(c_int) :: res
+      end function
+
+      function GetScreenWidth () result (res) bind (c, name="GetScreenWidth")
+         import :: c_int
+         integer(c_int) :: res
+      end function
+
+      function GetRenderHeight () result (res) bind (c, name="GetRenderHeight")
+         import :: c_int
+         integer(c_int) :: res
+      end function
+
+      function GetRenderWidth () result (res) bind (c, name="GetRenderWidth")
+         import :: c_int
+         integer(c_int) :: res
+      end function
+
+      function GetMonitorCount () result (res) bind (c, name="GetMonitorCount")
+         import :: c_int
+         integer(c_int) :: res
+      end function
+
+      function GetCurrentMonitor () result (res) bind (c, name="GetCurrentMonitor")
+         import :: c_int
+         integer(c_int) :: res
+      end function
+
+      function GetMonitorPosition (monitor) result (res) bind (c, name="GetMonitorPosition")
+         import :: Vector2
+         import :: c_int
+         integer(c_int), intent(in) :: monitor
+         type(Vector2) :: res
+      end function
+
+      function GetMonitorWidth (monitor) result (res) bind (c, name="GetMonitorWidth")
+         import :: c_int
+         integer(c_int), intent(in) :: monitor
+         integer(c_int) :: res
+      end function
+
+      function GetMonitorHeight (monitor) result (res) bind (c, name="GetMonitorHeight")
+         import :: c_int
+         integer(c_int), intent(in) :: monitor
+         integer(c_int) :: res
+      end function
+
+      function GetMonitorPhysicalWidth (monitor) result (res) bind (c, name="GetMonitorPhysicalWidth")
+         import :: c_int
+         integer(c_int), intent(in) :: monitor
+         integer(c_int) :: res
+      end function
+
+      function GetMonitorPhysicalHeight (monitor) result (res) bind (c, name="GetMonitorPhysicalHeight")
+         import :: c_int
+         integer(c_int), intent(in) :: monitor
+         integer(c_int) :: res
+      end function
+
+      function GetMonitorRefreshRate (monitor) result (res) bind (c, name="GetMonitorRefreshRate")
+         import :: c_int
+         integer(c_int), intent(in) :: monitor
+         integer(c_int) :: res
+      end function
+
 !RLAPI Vector2 GetWindowPosition(void);                            // Get window position XY on monitor
 !RLAPI Vector2 GetWindowScaleDPI(void);                            // Get window scale DPI factor
 !RLAPI const char *GetMonitorName(int monitor);                    // Get the human-readable, UTF-8 encoded name of the primary monitor
@@ -884,11 +958,11 @@ module raylib
 !RLAPI bool IsCursorOnScreen(void);                                // Check if cursor is on the screen
 !
 !// Drawing-related functions
+
    subroutine ClearBackground (col) bind (c, name="ClearBackground")
       import :: Color
       Type(Color), intent(in), value :: col
    end subroutine
-!RLAPI void ClearBackground(Color color);                          // Set background color (framebuffer clear color)
 
    subroutine BeginDrawing () bind (c, name="BeginDrawing")
    end subroutine
@@ -1014,7 +1088,14 @@ module raylib
 !
 !// Input-related functions: keyboard
 !RLAPI bool IsKeyPressed(int key);                             // Check if a key has been pressed once
-!RLAPI bool IsKeyDown(int key);                                // Check if a key is being pressed
+
+      function IsKeyDown (key) result (res) bind (c, name="IsKeyDown")
+         import :: c_int
+         import :: c_bool
+         integer(c_int), intent(in), value :: key
+         logical(c_bool) :: res
+      end function
+
 !RLAPI bool IsKeyReleased(int key);                            // Check if a key has been released once
 !RLAPI bool IsKeyUp(int key);                                  // Check if a key is NOT being pressed
 !RLAPI void SetExitKey(int key);                               // Set a custom key to exit program (default is ESC)
@@ -1101,7 +1182,16 @@ module raylib
 !RLAPI void DrawCircleSector(Vector2 center, float radius, float startAngle, float endAngle, int segments, Color color);      // Draw a piece of a circle
 !RLAPI void DrawCircleSectorLines(Vector2 center, float radius, float startAngle, float endAngle, int segments, Color color); // Draw circle sector outline
 !RLAPI void DrawCircleGradient(int centerX, int centerY, float radius, Color color1, Color color2);       // Draw a gradient-filled circle
-!RLAPI void DrawCircleV(Vector2 center, float radius, Color color);                                       // Draw a color-filled circle (Vector version)
+
+      subroutine DrawCircleV (center, radius, col) bind (c, name="DrawCircleV")
+         import :: Vector2
+         import :: c_float
+         import :: Color
+         type(Vector2), intent(in), value :: center
+         real(c_float), intent(in), value :: radius
+         type(Color), intent(in), value :: col
+      end subroutine
+
 !RLAPI void DrawCircleLines(int centerX, int centerY, float radius, Color color);                         // Draw circle outline
 !RLAPI void DrawEllipse(int centerX, int centerY, float radiusH, float radiusV, Color color);             // Draw ellipse
 !RLAPI void DrawEllipseLines(int centerX, int centerY, float radiusH, float radiusV, Color color);        // Draw ellipse outline
@@ -1143,7 +1233,14 @@ module raylib
 !
 !// Image loading functions
 !// NOTE: This functions do not require GPU access
-!RLAPI Image LoadImage(const char *fileName);                                                             // Load image from file into CPU memory (RAM)
+
+   function LoadImage (fileName) result(res) bind (c, name="LoadImage")
+      import :: Image
+      import :: c_char
+      character(c_char), dimension(*), intent(in) :: fileName
+      type(Image) :: res
+   end function
+
 !RLAPI Image LoadImageRaw(const char *fileName, int width, int height, int format, int headerSize);       // Load image from RAW file data
 !RLAPI Image LoadImageAnim(const char *fileName, int *frames);                                            // Load image sequence from file (frames appended to image.data)
 !RLAPI Image LoadImageFromMemory(const char *fileType, const unsigned char *fileData, int dataSize);      // Load image from memory buffer, fileType refers to extension: i.e. '.png'

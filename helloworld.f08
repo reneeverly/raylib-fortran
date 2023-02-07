@@ -9,15 +9,10 @@ program test
 
    call SetTargetFPS(60)
 
-   do
-      if (WindowShouldClose()) then
-         exit
-      end if
-
+   do while (.not. WindowShouldClose())
       call BeginDrawing()
 
       call ClearBackground(RAYWHITE)
-
       call DrawText("Congrats!  You created your first window in Fortran!", 150, 200, 20, LIGHTGRAY)
 
       call EndDrawing()
