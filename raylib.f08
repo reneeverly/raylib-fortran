@@ -109,7 +109,7 @@ module raylib
       type(Vector3) :: target
       type(Vector3) :: up
       real(c_float) :: fovy
-      integer(c_int) :: projection
+      integer(c_int) :: projection 
    end type
 
 !typedef Camera3D Camera;    // Camera type fallback, defaults to Camera3D
@@ -687,6 +687,7 @@ module raylib
 !
 !// Camera projection
 !typedef enum {
+   integer(c_int) :: CAMERA_PERSPECTIVE = 0
 !    CAMERA_PERSPECTIVE = 0,         // Perspective projection
 !    CAMERA_ORTHOGRAPHIC             // Orthographic projection
 !} CameraProjection;
@@ -969,7 +970,12 @@ module raylib
 
 !RLAPI void BeginMode2D(Camera2D camera);                          // Begin 2D mode with custom camera (2D)
 !RLAPI void EndMode2D(void);                                       // Ends 2D mode with custom camera
-!RLAPI void BeginMode3D(Camera3D camera);                          // Begin 3D mode with custom camera (3D)
+   subroutine BeginMode3D (camera) bind (c, name="BeginMode3D")
+      import :: Camera3D
+      type(Camera3D), intent(in), value :: camera
+   end subroutine
+   subroutine EndMode3D () bind (c, name="EndMode3D")
+   end subroutine
 !RLAPI void EndMode3D(void);                                       // Ends 3D mode and returns to default 2D orthographic mode
 !RLAPI void BeginTextureMode(RenderTexture2D target);              // Begin drawing to render texture
 !RLAPI void EndTextureMode(void);                                  // Ends drawing to render texture
@@ -1385,6 +1391,11 @@ module raylib
 !RLAPI bool ExportFontAsCode(Font font, const char *fileName);                               // Export font as code file, returns true on success
 !
 !// Text drawing functions
+      subroutine DrawFPS(posX, posY) bind (c, name="DrawFPS")
+         import :: c_int
+         integer(c_int), intent(in), value :: posX
+         integer(c_int), intent(in), value :: posY
+      end subroutine
 !RLAPI void DrawFPS(int posX, int posY);                                                     // Draw current FPS
 
       subroutine DrawText (text, posX, posY, fontSize, col) bind (c, name="DrawText")
@@ -1446,9 +1457,27 @@ module raylib
 !RLAPI void DrawCircle3D(Vector3 center, float radius, Vector3 rotationAxis, float rotationAngle, Color color); // Draw a circle in 3D world space
 !RLAPI void DrawTriangle3D(Vector3 v1, Vector3 v2, Vector3 v3, Color color);                              // Draw a color-filled triangle (vertex in counter-clockwise order!)
 !RLAPI void DrawTriangleStrip3D(Vector3 *points, int pointCount, Color color);                            // Draw a triangle strip defined by points
-!RLAPI void DrawCube(Vector3 position, float width, float height, float length, Color color);             // Draw cube
+      subroutine DrawCube (position, width, height, length, col) bind (c, name="DrawCube")
+         import :: Vector3
+         import :: c_float
+         import :: Color
+         type(Vector3), intent(in), value :: position
+         real(c_float), intent(in), value :: width
+         real(c_float), intent(in), value :: height
+         real(c_float), intent(in), value :: length
+         type(Color), intent(in), value :: col
+      end subroutine
 !RLAPI void DrawCubeV(Vector3 position, Vector3 size, Color color);                                       // Draw cube (Vector version)
-!RLAPI void DrawCubeWires(Vector3 position, float width, float height, float length, Color color);        // Draw cube wires
+      subroutine DrawCubeWires (position, width, height, length, col) bind (c, name="DrawCubeWires")
+         import :: Vector3
+         import :: c_float
+         import :: Color
+         type(Vector3), intent(in), value :: position
+         real(c_float), intent(in), value :: width
+         real(c_float), intent(in), value :: height
+         real(c_float), intent(in), value :: length
+         type(Color), intent(in), value :: col
+      end subroutine
 !RLAPI void DrawCubeWiresV(Vector3 position, Vector3 size, Color color);                                  // Draw cube wires (Vector version)
 !RLAPI void DrawCubeTexture(Texture2D texture, Vector3 position, float width, float height, float length, Color color); // Draw cube textured
 !RLAPI void DrawCubeTextureRec(Texture2D texture, Rectangle source, Vector3 position, float width, float height, float length, Color color); // Draw cube with a region of a texture
@@ -1461,7 +1490,12 @@ module raylib
 !RLAPI void DrawCylinderWiresEx(Vector3 startPos, Vector3 endPos, float startRadius, float endRadius, int sides, Color color); // Draw a cylinder wires with base at startPos and top at endPos
 !RLAPI void DrawPlane(Vector3 centerPos, Vector2 size, Color color);                                      // Draw a plane XZ
 !RLAPI void DrawRay(Ray ray, Color color);                                                                // Draw a ray line
-!RLAPI void DrawGrid(int slices, float spacing);                                                          // Draw a grid (centered at (0, 0, 0))
+      subroutine DrawGrid (slices, spacing) bind (c, name="DrawGrid")
+         import :: c_float
+         import :: c_int
+         integer(c_int), intent(in), value :: slices
+         real(c_float), intent(in), value :: spacing
+      end subroutine
 !
 !//------------------------------------------------------------------------------------
 !// Model 3d Loading and Drawing Functions (Module: models)
