@@ -13,7 +13,7 @@ program test
    integer, parameter :: screenWidth = 800
    integer, parameter :: screenHeight = 450
 
-   call InitWindow(screenWidth, screenHeight, "raylib [core] example - basic window")
+   call InitWindow(screenWidth, screenHeight, "raylib [core] example - basic window"//c_null_char)
 
    call SetTargetFPS(60)
 
@@ -21,7 +21,7 @@ program test
       call BeginDrawing()
 
       call ClearBackground(RAYWHITE)
-      call DrawText("Congrats!  You created your first window in Fortran!", 150, 200, 20, LIGHTGRAY)
+      call DrawText("Congrats!  You created your first window in Fortran!"//c_null_char, 150, 200, 20, LIGHTGRAY)
 
       call EndDrawing()
    end do

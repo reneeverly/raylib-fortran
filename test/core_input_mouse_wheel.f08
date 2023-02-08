@@ -27,10 +27,10 @@ program core_input_keys
 
          call DrawRectangle(screenWidth / 2 - 40, boxPositionY, 80, 80, MAROON)
 
-         call DrawText("Use mouse wheel to move the cube up and down!"//achar(0), 10, 10, 20, GRAY)
+         call DrawText("Use mouse wheel to move the cube up and down!"//c_null_char, 10, 10, 20, GRAY)
          call DrawText("Box position Y: "&
             //achar(iachar('0')+mod(boxPositionY/100,10))//achar(iachar('0')+mod(boxPositionY/10,10))&
-            //achar(iachar('0')+mod(boxPositionY,10))//achar(0), 10, 40, 20, LIGHTGRAY)
+            //achar(iachar('0')+mod(boxPositionY,10))//c_null_char, 10, 40, 20, LIGHTGRAY)
 
       call EndDrawing()
    end do

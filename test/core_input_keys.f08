@@ -8,7 +8,7 @@ program core_input_keys
 
    type(Vector2) :: ballPosition
 
-   call InitWindow(screenWidth, screenHeight, "raylib [core] example - keyboard input")
+   call InitWindow(screenWidth, screenHeight, "raylib [core] example - keyboard input"//c_null_char)
 
    ballPosition = Vector2(screenWidth / 2.0, screenHeight / 2.0)
 
@@ -31,7 +31,7 @@ program core_input_keys
       call BeginDrawing()
 
          call ClearBackground(RAYWHITE)
-         call DrawText("move the ball with arrow keys", 10, 10, 20, DARKGRAY)
+         call DrawText("move the ball with arrow keys"//c_null_char, 10, 10, 20, DARKGRAY)
          call DrawCircleV(ballPosition, 50.0, MAROON)
 
       call EndDrawing()

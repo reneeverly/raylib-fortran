@@ -12,7 +12,7 @@ program core_input_mouse
    ballPosition = Vector2(-100.0, -100.0)
    ballColor = DARKBLUE
 
-   call InitWindow(screenWidth, screenHeight, "raylib [core] example - mouse input")
+   call InitWindow(screenWidth, screenHeight, "raylib [core] example - mouse input"//c_null_char)
 
    call SetTargetFPS(60)
 
@@ -42,7 +42,7 @@ program core_input_mouse
 
       call DrawCircleV(ballPosition, 40.0, ballColor)
 
-      call DrawText("move ball with mouse and click mouse button to change color", 10, 10, 20, DARKGRAY)
+      call DrawText("move ball with mouse and click mouse button to change color"//c_null_char, 10, 10, 20, DARKGRAY)
 
       call EndDrawing()
    end do
