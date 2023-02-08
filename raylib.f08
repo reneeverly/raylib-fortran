@@ -459,16 +459,13 @@ module raylib
 !#define MOUSE_RIGHT_BUTTON  MOUSE_BUTTON_RIGHT
 !#define MOUSE_MIDDLE_BUTTON MOUSE_BUTTON_MIDDLE
 !
-!// Mouse buttons
-!typedef enum {
-!    MOUSE_BUTTON_LEFT    = 0,       // Mouse button left
-!    MOUSE_BUTTON_RIGHT   = 1,       // Mouse button right
-!    MOUSE_BUTTON_MIDDLE  = 2,       // Mouse button middle (pressed wheel)
-!    MOUSE_BUTTON_SIDE    = 3,       // Mouse button side (advanced mouse device)
-!    MOUSE_BUTTON_EXTRA   = 4,       // Mouse button extra (advanced mouse device)
-!    MOUSE_BUTTON_FORWARD = 5,       // Mouse button fordward (advanced mouse device)
-!    MOUSE_BUTTON_BACK    = 6,       // Mouse button back (advanced mouse device)
-!} MouseButton;
+   integer(c_int) :: MOUSE_BUTTON_LEFT = 0
+   integer(c_int) :: MOUSE_BUTTON_RIGHT = 1
+   integer(c_int) :: MOUSE_BUTTON_MIDDLE = 2
+   integer(c_int) :: MOUSE_BUTTON_SIDE = 3
+   integer(c_int) :: MOUSE_BUTTON_EXTRA = 4
+   integer(c_int) :: MOUSE_BUTTON_FORWARD = 5
+   integer(c_int) :: MOUSE_BUTTON_BACK = 6
 !
 !// Mouse cursor
 !typedef enum {
@@ -1115,18 +1112,29 @@ module raylib
 !RLAPI int SetGamepadMappings(const char *mappings);           // Set internal gamepad mappings (SDL_GameControllerDB)
 !
 !// Input-related functions: mouse
-!RLAPI bool IsMouseButtonPressed(int button);                  // Check if a mouse button has been pressed once
+      function IsMouseButtonPressed (button) result (res) bind (c, name="IsMouseButtonPressed")
+         import :: c_bool
+         import :: c_int
+         integer(c_int), intent(in), value :: button
+         logical(c_bool) :: res
+      end function
 !RLAPI bool IsMouseButtonDown(int button);                     // Check if a mouse button is being pressed
 !RLAPI bool IsMouseButtonReleased(int button);                 // Check if a mouse button has been released once
 !RLAPI bool IsMouseButtonUp(int button);                       // Check if a mouse button is NOT being pressed
 !RLAPI int GetMouseX(void);                                    // Get mouse position X
 !RLAPI int GetMouseY(void);                                    // Get mouse position Y
-!RLAPI Vector2 GetMousePosition(void);                         // Get mouse position XY
+      function GetMousePosition () result (res) bind (c, name="GetMousePosition")
+         import :: Vector2
+         type(Vector2) :: res
+      end function
 !RLAPI Vector2 GetMouseDelta(void);                            // Get mouse delta between frames
 !RLAPI void SetMousePosition(int x, int y);                    // Set mouse position XY
 !RLAPI void SetMouseOffset(int offsetX, int offsetY);          // Set mouse offset
 !RLAPI void SetMouseScale(float scaleX, float scaleY);         // Set mouse scaling
-!RLAPI float GetMouseWheelMove(void);                          // Get mouse wheel movement for X or Y, whichever is larger
+      function GetMouseWheelMove () result (res) bind (c, name="GetMouseWheelMove")
+         import c_float
+         real(c_float) :: res
+      end function
 !RLAPI Vector2 GetMouseWheelMoveV(void);                       // Get mouse wheel movement for both X and Y
 !RLAPI void SetMouseCursor(int cursor);                        // Set mouse cursor
 !
@@ -1197,6 +1205,15 @@ module raylib
 !RLAPI void DrawEllipseLines(int centerX, int centerY, float radiusH, float radiusV, Color color);        // Draw ellipse outline
 !RLAPI void DrawRing(Vector2 center, float innerRadius, float outerRadius, float startAngle, float endAngle, int segments, Color color); // Draw ring
 !RLAPI void DrawRingLines(Vector2 center, float innerRadius, float outerRadius, float startAngle, float endAngle, int segments, Color color);    // Draw ring outline
+      subroutine DrawRectangle (posX, posY, width, height, col) bind (c, name="DrawRectangle")
+         import :: c_int
+         import :: Color
+         integer(c_int), intent(in), value :: posX
+         integer(c_int), intent(in), value :: posY
+         integer(c_int), intent(in), value :: width
+         integer(c_int), intent(in), value :: height
+         type(Color), intent(in), value :: col
+      end subroutine
 !RLAPI void DrawRectangle(int posX, int posY, int width, int height, Color color);                        // Draw a color-filled rectangle
 !RLAPI void DrawRectangleV(Vector2 position, Vector2 size, Color color);                                  // Draw a color-filled rectangle (Vector version)
 !RLAPI void DrawRectangleRec(Rectangle rec, Color color);                                                 // Draw a color-filled rectangle
